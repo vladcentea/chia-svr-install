@@ -1,7 +1,7 @@
 
 #!/bin/bash
 
-### OS BASE install
+### OS BASE install  
 
 sudo apt-get install icewm -y
 sudo apt install tightvncserver -y
