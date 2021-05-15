@@ -13,6 +13,7 @@ sudo apt install git -y
 sudo apt install nfs-kernel-server -y
 sudo apt install nfs-common -y
 
+vncserver
 
 sudo chown vlad:vlad /mnt
 
