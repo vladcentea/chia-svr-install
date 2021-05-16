@@ -74,6 +74,8 @@ sudo bash -c 'echo -e "/mnt  10.32.51.160/27(rw,sync,no_subtree_check,crossmnt,n
 
 sudo systemctl restart nfs-kernel-server
 sudo exportfs -a
+chmod a+rwx -R /mnt
+
 
 ### FIREWALL SETUP
 
