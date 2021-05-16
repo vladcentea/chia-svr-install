@@ -582,7 +582,7 @@ do
         if [ "$myfilesize" == "0" ]; then
                 rm $tmp_dir/$filename
         else
-        echo -e "$myfilesize in $tmp_dir   "
+        echo -e "$myfilesize in $tmp_dir to $f_dir - MY PID IS: $BASHPID "
         rsync --remove-source-files --progress  "$tmp_dir"/"$filename" "$f_dir"/"$filename"
         myfilesize2=$(wc -c "$tmp_dir/$filename" | awk '{print $1}')
             if [ "$myfilesize2" == "0" ]; then
