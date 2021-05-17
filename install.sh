@@ -31,7 +31,7 @@ do
  if [ $current_fs == "xfs" ]; then
   echo -e "sd$d already formated"
  else
-  sudo mkfs.xfs  -f -L DISK2 /dev/sdb
+  sudo mkfs.xfs  -f -L DISK2 /dev/sd$d
  fi
 done
 
