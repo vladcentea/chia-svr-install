@@ -43,7 +43,7 @@ do
   x=$((i + f))
   t=$(printf "\\$(printf '%03o' "$x")")
   sudo mount /dev/sd$t /mnt/disk$i
-  sudo bash -c 'echo /dev/sd$t /mnt/disk$i xfs defaults 0 2 >> /etc/fstab'
+echo  sudo bash -c 'echo /dev/sd$t /mnt/disk$i xfs defaults 0 2 >> /etc/fstab'
 done
 
 sudo chown vlad:vlad -R /mnt
@@ -74,7 +74,7 @@ sudo bash -c 'echo -e "/mnt  10.32.51.160/27(rw,sync,no_subtree_check,crossmnt,n
 
 sudo systemctl restart nfs-kernel-server
 sudo exportfs -a
-chmod a+rwx -R /mnt
+sudo chmod a+rwx -R /mnt
 
 
 ### FIREWALL SETUP
