@@ -43,7 +43,7 @@ do
   x=$((i + f))
   t=$(printf "\\$(printf '%03o' "$x")")
   sudo mount /dev/sd$t /mnt/disk$i
-  sudo bash -c 'echo /dev/sd$t /mnt/disk$i xfs defaults 0 2 >> /etc/fstab'
+  sudo bash -c 'echo /dev/sd'"$t"' /mnt/disk'"$i"' xfs defaults 0 2 >> /etc/fstab'
 done
 
 sudo chown vlad:vlad -R /mnt
