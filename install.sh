@@ -2,6 +2,7 @@
 
 ### OS BASE install  
 
+
 sudo apt-get install icewm -y
 sudo apt install tightvncserver -y
 sudo apt install xterm -y
@@ -13,6 +14,10 @@ sudo apt install nfs-kernel-server -y
 sudo apt install nfs-common -y
 
 vncserver
+
+
+cat > ~/disk-setup.sh <<EOL
+#!/bin/bash
 
 sudo chown vlad:vlad /mnt
 
@@ -37,6 +42,7 @@ done
 
 ### MOUNT
 
+
 for i in {2..12}
 do
   f=96
@@ -48,6 +54,7 @@ done
 
 sudo chown vlad:vlad -R /mnt
 
+
 #### CREATE  CHIA DIRS
 
 for i in {1..12}
@@ -56,7 +63,14 @@ do
  mkdir /mnt/disk$i/final
 done
 
+hhEOL
+chmod a+x disk-setup.sh
+
 #### NETWORK SETUP FOR PRIV NET
+
+cat > ~/pn-setup.sh <<EOL
+
+#!/bin/bash
 
 sudo echo -e "  ethernets:" >> /etc/netplan/01-netcfg.yaml
 sudo echo -e "    enp2s0f1:" >> /etc/netplan/01-netcfg.yaml
@@ -65,30 +79,57 @@ sudo echo -e "       dhcp6: no" >> /etc/netplan/01-netcfg.yaml
 
 sudo netplan apply
 
+EOL
 
-sudo chmod a+rwx -R /mnt
+chmod a+x ~/pn-setup.sh
+#sudo ~/pn-setup.sh
+
 
 ### NFS SETUP
+
+cat > ~/nfs-setup.sh <<EOL
+#!/bin/bash
+
+sudo chmod a+rwx -R /mnt
 
 sudo bash -c 'echo -e "/mnt  10.32.51.160/27(rw,sync,no_subtree_check,crossmnt,no_root_squash)" >> /etc/exports'
 
 sudo systemctl restart nfs-kernel-server
 sudo exportfs -a
 sudo chmod a+rwx -R /mnt
+ 
+EOL
 
+chmod a+x ~/nfs-setup.sh
+#sudo ~/nfs-setup.sh
 
 ### FIREWALL SETUP
+
+
+cat > ~/fw-setup.sh <<EOL
+#!/bin/bash
 
 sudo ufw allow from any to any port 22
 sudo ufw allow from any to any port 5901
 sudo ufw allow from any to any port 5902
+sudo ufw allow from any to any port 8444
 sudo ufw allow from any to any port 5903
 sudo ufw allow from any to any port 5904
 sudo ufw allow from 10.32.51.160/27 to 10.32.51.160/27  port nfs
 sudo ufw enable
 sudo ufw status
 
+
+EOL
+
+chmod a+x ~/fw-setup.sh
+#sudo ~/fw-setup.sh
+
 ### install CHIA
+
+cat > ~/chia-setup.sh <<EOL
+#!/bin/bash
+
 
 cd ~
 git clone https://github.com/Chia-Network/chia-blockchain.git -b latest --recurse-submodules
@@ -103,7 +144,15 @@ echo "lesson pattern shaft fiction dish father since tongue flame quarter spirit
 chia keys add -f ~/words.tmp
 rm ~/words.tmp
 
+EOL
+chmod a+x ~/chia-setup.sh
+#sudo ~/chia-setup.sh
+
+
 ### Install HPOOL miner
+
+cat > ~/hp-setup.sh <<EOL2
+#!/bin/bash
 
 cd ~
 wget https://github.com/hpool-dev/chia-miner/releases/download/v1.2.0-5/HPool-Miner-chia-v1.2.0-5-linux.zip
@@ -160,8 +209,16 @@ debug: ""
 language: en
 EOL
 
+EOL2
+chmod a+x ~/hp-setup.sh
+#sudo ~/hp-setup.sh
+
 
 ### INSTALL SCHEDULER
+
+cat > ~/sched-setup.sh <<EOL2
+#!/bin/bash
+
 
 cd ~
 git clone https://github.com/swar/Swar-Chia-Plot-Manager
@@ -559,6 +616,10 @@ jobs:
 
 EOL
 
+EOL2
+chmod a+x ~/sched-setup.sh
+#sudo ~/sched-setup.sh
+
 
 ### DEPLOY COPY SCRIPT
 
@@ -567,13 +628,19 @@ cat > ~/copy-plots.sh <<EOL
 
 #!/bin/bash
 
+$IP
+$server=s$IP-12x12
+
+mkdir /mnt/$server
+sudo mount 10.32.51.1$IP:/mnt -t nfs /mnt/$server
+
 while :
 do
 
 for i in {2..12}
 do
   tmp_dir="/mnt/disk$i/tmp"
-  f_dir="/mnt/s1-12x12/disk$i/tmp"
+  f_dir="/mnt/$server/disk$i/tmp"
 #  echo -e "$f_dir"
   for file in "$tmp_dir"/*.plot; do
     filename=$(basename -- "$file")
@@ -605,3 +672,26 @@ EOL
 
 chmod a+x ~/copy-plots.sh
 
+
+
+cat > ~/start_mg.sh <<EOL
+#!/bin/bash
+
+cd ~/chia-blockchain
+. ./activate
+cd ~/Swar-Chia-Plot-Manager
+python manager.py restart
+
+EOL
+chmod a+x ~/start_mg.sh
+
+cat > ~/view_mg.sh <<EOL
+#!/bin/bash
+
+cd ~/chia-blockchain
+. ./activate
+cd ~/Swar-Chia-Plot-Manager
+python manager.py view
+
+EOL
+chmod a+x ~/view_mg.sh
