@@ -13,17 +13,17 @@ sudo apt install git -y
 sudo apt install nfs-kernel-server -y
 sudo apt install nfs-common -y
 
-vncserver
+u=$'$(printf "\\\\$(printf '%03o' "$x")")'
 
 
-cat > ~/disk-setup.sh <<EOL
+cat > ~/disk-setup.sh<<EOL
 #!/bin/bash
 
 sudo chown vlad:vlad /mnt
 
 for i in {1..12} 
 do
-mkdir /mnt/disk$i
+mkdir /mnt/disk\$i
 done
 
 ## FORMAT
@@ -31,12 +31,12 @@ done
 
 for d in {b..l}
 do
- current_fs=$(lsblk -no KNAME,FSTYPE /dev/sd$d)
- current_fs=$(echo $current_fs | awk '{print $2}')
- if [ $current_fs == "xfs" ]; then
-  echo -e "sd$d already formated"
+ current_fs=\$(lsblk -no KNAME,FSTYPE /dev/sd\$d)
+ current_fs=\$(echo \$current_fs | awk '{print \$2}')
+ if [ \$current_fs == "xfs" ]; then
+  echo -e "sd\$d already formated"
  else
-  sudo mkfs.xfs  -f -L DISK2 /dev/sd$d
+  sudo mkfs.xfs  -f -L DISK2 /dev/sd\$d
  fi
 done
 
@@ -46,10 +46,10 @@ done
 for i in {2..12}
 do
   f=96
-  x=$((i + f))
-  t=$(printf "\\$(printf '%03o' "$x")")
-  sudo mount /dev/sd$t /mnt/disk$i
-  sudo bash -c 'echo /dev/sd'"$t"' /mnt/disk'"$i"' xfs defaults 0 2 >> /etc/fstab'
+  x=\$((i + f))
+  t=$u
+  sudo mount /dev/sd\$t /mnt/disk\$i
+  sudo bash -c 'echo /dev/sd'"\$t"' /mnt/disk'"\$i"' xfs defaults 0 2 >> /etc/fstab'
 done
 
 sudo chown vlad:vlad -R /mnt
@@ -59,18 +59,19 @@ sudo chown vlad:vlad -R /mnt
 
 for i in {1..12}
 do
- mkdir /mnt/disk$i/tmp
- mkdir /mnt/disk$i/final
+ mkdir /mnt/disk\$i/tmp
+ mkdir /mnt/disk\$i/final
 done
 
-hhEOL
-chmod a+x disk-setup.sh
+EOL
+chmod a+x ~/disk-setup.sh
 
 #### NETWORK SETUP FOR PRIV NET
 
-cat > ~/pn-setup.sh <<EOL
+cat > ~/pn-setup.sh<<EOL
 
 #!/bin/bash
+vncserver
 
 sudo echo -e "  ethernets:" >> /etc/netplan/01-netcfg.yaml
 sudo echo -e "    enp2s0f1:" >> /etc/netplan/01-netcfg.yaml
