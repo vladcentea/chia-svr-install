@@ -695,3 +695,16 @@ python manager.py view
 
 EOL
 chmod a+x ~/view_mg.sh
+
+
+cat > ~/all_install.sh <<EOL
+#!/bin/bash
+sudo ~/disk-setup.sh
+sudo ~/pn-setup.sh
+sudo ~/nfs-setup.sh
+sudo ~/fw-setup.sh
+sudo ~/chia-setup.sh 
+sudo ~/hp-setup.sh 
+sudo ~/sched-setup.sh
+
+EOL
