@@ -625,7 +625,7 @@ chmod a+x ~/sched-setup.sh
 ### DEPLOY COPY SCRIPT
 
 
-cat > ~/copy-plots.sh <<EOL
+cat > ~/copy-plots.sh<<EOL
 #!/bin/bash
 
 \$IP=68
@@ -697,7 +697,7 @@ EOL
 chmod a+x ~/view_mg.sh
 
 
-cat > ~/all_install.sh <<EOL
+cat > ~/all_install.sh<<EOL
 #!/bin/bash
 sudo ~/disk-setup.sh
 sudo ~/pn-setup.sh
