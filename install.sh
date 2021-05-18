@@ -703,8 +703,8 @@ sudo ~/disk-setup.sh
 sudo ~/pn-setup.sh
 sudo ~/nfs-setup.sh
 sudo ~/fw-setup.sh
-sudo ~/chia-setup.sh 
-sudo ~/hp-setup.sh 
-sudo ~/sched-setup.sh
+~/chia-setup.sh 
+~/hp-setup.sh 
+~/sched-setup.sh
 
 EOL
