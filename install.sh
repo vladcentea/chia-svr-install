@@ -625,37 +625,36 @@ chmod a+x ~/sched-setup.sh
 
 
 cat > ~/copy-plots.sh <<EOL
-
 #!/bin/bash
 
-$IP
-$server=s$IP-12x12
+\$IP=68
+\$server=s\$IP-12x12
 
-mkdir /mnt/$server
-sudo mount 10.32.51.1$IP:/mnt -t nfs /mnt/$server
+mkdir /mnt/\$server
+sudo mount 10.32.51.1\$IP:/mnt -t nfs /mnt/\$server
 
 while :
 do
 
 for i in {2..12}
 do
-  tmp_dir="/mnt/disk$i/tmp"
-  f_dir="/mnt/$server/disk$i/tmp"
-#  echo -e "$f_dir"
-  for file in "$tmp_dir"/*.plot; do
-    filename=$(basename -- "$file")
-    if [ "$filename" == "*.plot" ]; then
+  tmp_dir="/mnt/disk\$i/tmp"
+  f_dir="/mnt/\$server/disk\$i/tmp"
+#  echo -e "\$f_dir"
+  for file in "\$tmp_dir"/*.plot; do
+    filename=\$(basename -- "\$file")
+    if [ "\$filename" == "*.plot" ]; then
      sleep 1
     else
-        myfilesize=$(wc -c "$tmp_dir/$filename" | awk '{print $1}')
-        if [ "$myfilesize" == "0" ]; then
-                rm $tmp_dir/$filename
+        myfilesize=\$(wc -c "\$tmp_dir/\$filename" | awk '{print \$1}')
+        if [ "\$myfilesize" == "0" ]; then
+                rm \$tmp_dir/\$filename
         else
-        echo -e "$myfilesize in $tmp_dir to $f_dir - MY PID IS: $BASHPID "
-        rsync --remove-source-files --progress  "$tmp_dir"/"$filename" "$f_dir"/"$filename"
-        myfilesize2=$(wc -c "$tmp_dir/$filename" | awk '{print $1}')
-            if [ "$myfilesize2" == "0" ]; then
-                rm $tmp_dir/$filename
+        echo -e "\$myfilesize in \$tmp_dir to \$f_dir - MY PID IS: \$BASHPID "
+        rsync --remove-source-files --progress  "\$tmp_dir"/"\$filename" "\$f_dir"/"\$filename"
+        myfilesize2=\$(wc -c "\$tmp_dir/\$filename" | awk '{print \$1}')
+            if [ "\$myfilesize2" == "0" ]; then
+                rm \$tmp_dir/\$filename
             fi
 
         break
