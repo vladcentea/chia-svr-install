@@ -708,3 +708,5 @@ sudo ~/fw-setup.sh
 ~/sched-setup.sh
 
 EOL
+chmod a+x ~/all_install.sh
+
