@@ -57,11 +57,11 @@ sudo chown vlad:vlad -R /mnt
 
 #### CREATE  CHIA DIRS
 
-for i in {1..12}
-do
- mkdir /mnt/disk\$i/tmp
- mkdir /mnt/disk\$i/final
-done
+# for i in {1..12}
+# do
+#  mkdir /mnt/disk\$i/tmp
+#  mkdir /mnt/disk\$i/final
+# done
 
 EOL
 chmod a+x ~/disk-setup.sh
@@ -166,31 +166,42 @@ mv linux hpool-farmer
 cat > ~/hpool-farmer/config.yaml <<EOL
 token: ""
 path:
-- /mnt/disk1/tmp
+- /mnt/disk1
+- /mnt/disk2
+- /mnt/disk3
+- /mnt/disk4
+- /mnt/disk5
+- /mnt/disk6
+- /mnt/disk7
+- /mnt/disk8
+- /mnt/disk9
+- /mnt/disk10
+- /mnt/disk11
+- /mnt/disk12
 - /mnt/disk1/final
-- /mnt/disk2/tmp
 - /mnt/disk2/final
-- /mnt/disk3/tmp
 - /mnt/disk3/final
-- /mnt/disk4/tmp
 - /mnt/disk4/final
-- /mnt/disk5/tmp
 - /mnt/disk5/final
-- /mnt/disk6/tmp
 - /mnt/disk6/final
-- /mnt/disk7/tmp
 - /mnt/disk7/final
-- /mnt/disk8/tmp
 - /mnt/disk8/final
-- /mnt/disk9/tmp
 - /mnt/disk9/final
-- /mnt/disk10/tmp
 - /mnt/disk10/final
-- /mnt/disk11/tmp
 - /mnt/disk11/final
-- /mnt/disk12/tmp
 - /mnt/disk12/final
-- /mnt/disk1/final
+- /mnt/disk1/tmp
+- /mnt/disk2/tmp
+- /mnt/disk3/tmp
+- /mnt/disk4/tmp
+- /mnt/disk5/tmp
+- /mnt/disk6/tmp
+- /mnt/disk7/tmp
+- /mnt/disk8/tmp
+- /mnt/disk9/tmp
+- /mnt/disk10/tmp
+- /mnt/disk11/tmp
+- /mnt/disk12/tmp
 minerName: $HOSTNAME
 apiKey: 025ba5b5-8bf2-4bdd-bb8b-2af1d3f65515
 cachePath: ""
@@ -233,12 +244,10 @@ pip install -r requirements.txt
 
 
 cat > ~/Swar-Chia-Plot-Manager/config.yaml <<EOL
-
 # This is a single variable that should contain the location of your chia executable file. This is the blockchain executable.
 #
-# WINDOWS EXAMPLE: C:\Users\Swar\AppData\Local\chia-blockchain\app-1.1.2\resources\app.asar.unpacked\daemon\chia.exe
+# WINDOWS EXAMPLE: C:\Users\Swar\AppData\Local\chia-blockchain\app-1.1.5\resources\app.asar.unpacked\daemon\chia.exe
 #   LINUX EXAMPLE: /usr/lib/chia-blockchain/resources/app.asar.unpacked/daemon/chia
-#  LINUX2 EXAMPLE: /home/swar/chia-blockchain/venv/bin/chia
 chia_location: /home/vlad/chia-blockchain/venv/bin/chia
 
 
@@ -254,7 +263,7 @@ manager:
 
 log:
   # folder_path: This is the folder where your log files for plots will be saved.
-  folder_path: /home/vlad/.chia/mainnet/plotter
+  folder_path: /home/vlad/.chia/mainnet/Plotter
 
 
 view:
@@ -284,6 +293,10 @@ notifications:
   notify_discord: false
   discord_webhook_url: https://discord.com/api/webhooks/0000000000000000/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
+  # IFTTT, ref https://ifttt.com/maker_webhooks, and this function will send title as value1 and message as value2.
+  notify_ifttt: false
+  ifttt_webhook_url: https://maker.ifttt.com/trigger/{event}/with/key/{api_key}
+
   # PLAY AUDIO SOUND
   notify_sound: false
   song: audio.mp3
@@ -293,12 +306,22 @@ notifications:
   pushover_user_key: xx
   pushover_api_key: xx
 
+  # TELEGRAM
+  notify_telegram: false
+  telegram_token: xxxxx
+
   # TWILIO
   notify_twilio: false
   twilio_account_sid: xxxxx
   twilio_auth_token: xxxxx
   twilio_from_phone: +1234657890
   twilio_to_phone: +1234657890
+
+
+instrumentation:
+  # This setting is here in case you wanted to enable instrumentation using Prometheus.
+  prometheus_enabled: false
+  prometheus_port: 9090
 
 
 progress:
@@ -322,7 +345,13 @@ global:
   #
   # max_concurrent: The maximum number of plots that your system can run. The manager will not kick off more than this
   #                 number of plots total over time.
-  max_concurrent: 11
+  # max_for_phase_1: The maximum number of plots that your system can run in phase 1.
+  # minimum_minutes_between_jobs: The minimum number of minutes before starting a new plotting job, this prevents
+  #                               multiple jobs from starting at the exact same time. This will alleviate congestion
+  #                               on destination drive. Set to 0 to disable.
+  max_concurrent: 7
+  max_for_phase_1: 3
+  minimum_minutes_between_jobs: 5
 
 
 jobs:
@@ -341,7 +370,8 @@ jobs:
   #                               you have chia set up on a machine that does not have your credentials.
   # [OPTIONAL] pool_public_key: Your pool public key. Same information as the above.
   #
-  # temporary_directory: Only a single directory should be passed into here. This is where the plotting will take place.
+  # temporary_directory: Can be a single value or a list of values. This is where the plotting will take place. If you
+  #                      provide a list, it will cycle through each drive one by one.
   # [OPTIONAL] temporary2_directory: Can be a single value or a list of values. This is an optional parameter to use in
   #                                  case you want to use the temporary2 directory functionality of Chia plotting.
   # destination_directory: Can be a single value or a list of values. This is the final directory where the plot will be
@@ -357,263 +387,363 @@ jobs:
   # max_concurrent: The maximum number of plots to have for this job at any given time.
   # max_concurrent_with_start_early: The maximum number of plots to have for this job at any given time including
   #                                  phases that started early.
-  # stagger_minutes: The amount of minutes to wait before the next job can get kicked off. You can even set this to
+  # initial_delay_minutes: This is the initial delay that is used when initiate the first job. It is only ever
+  #                        considered once. If you restart manager, it will still adhere to this value.
+  # stagger_minutes: The amount of minutes to wait before the next plot for this job can get kicked off. You can even set this to
   #                  zero if you want your plots to get kicked off immediately when the concurrent limits allow for it.
   # max_for_phase_1: The maximum number of plots on phase 1 for this job.
   # concurrency_start_early_phase: The phase in which you want to start a plot early. It is recommended to use 4 for
   #                                this field.
-  # concurrency_start_early_phase_delay: The maximum number of seconds to wait before a new plot gets kicked off when
+  # concurrency_start_early_phase_delay: The maximum number of minutes to wait before a new plot gets kicked off when
   #                                      the start early phase has been detected.
   # temporary2_destination_sync: This field will always submit the destination directory as the temporary2 directory.
   #                              These two directories will be in sync so that they will always be submitted as the
   #                              same value.
-
-  - name: Q11
-    max_plots: 9999
-    farmer_public_key:
-    pool_public_key:
-    temporary_directory: /mnt/disk11/tmp
-    temporary2_directory:
-    destination_directory: /mnt/disk11/tmp
-    size: 32
-    bitfield: true
-    threads: 2
-    buckets: 128
-    memory_buffer: 5000
-    max_concurrent: 1
-    max_concurrent_with_start_early: 1
-    stagger_minutes: 70
-    max_for_phase_1: 2
-    concurrency_start_early_phase: 4
-    concurrency_start_early_phase_delay: 0
-    temporary2_destination_sync: false
-
-  - name: Q12
-    max_plots: 999
-    farmer_public_key:
-    pool_public_key:
-    temporary_directory: /mnt/disk12/tmp
-    temporary2_directory:
-    destination_directory: /mnt/disk12/tmp
-    size: 32
-    bitfield: true
-    threads: 2
-    buckets: 128
-    memory_buffer: 5000
-    max_concurrent: 1
-    max_concurrent_with_start_early: 1
-    stagger_minutes: 70
-    max_for_phase_1: 2
-    concurrency_start_early_phase: 4
-    concurrency_start_early_phase_delay: 0
-    temporary2_destination_sync: false
-
-  - name: Q10
-    max_plots: 999
-    farmer_public_key:
-    pool_public_key:
-    temporary_directory: /mnt/disk10/tmp
-    temporary2_directory:
-    destination_directory: /mnt/disk10/tmp
-    size: 32
-    bitfield: true
-    threads: 2
-    buckets: 128
-    memory_buffer: 5000
-    max_concurrent: 1
-    max_concurrent_with_start_early: 1
-    stagger_minutes: 70
-    max_for_phase_1: 2
-    concurrency_start_early_phase: 4
-    concurrency_start_early_phase_delay: 0
-    temporary2_destination_sync: false
-
-  - name: Q9
-    max_plots: 999
-    farmer_public_key:
-    pool_public_key:
-    temporary_directory: /mnt/disk9/tmp
-    temporary2_directory:
-    destination_directory: /mnt/disk9/tmp
-    size: 32
-    bitfield: true
-    threads: 2
-    buckets: 128
-    memory_buffer: 5000
-    max_concurrent: 1
-    max_concurrent_with_start_early: 1
-    stagger_minutes: 70
-    max_for_phase_1: 2
-    concurrency_start_early_phase: 4
-    concurrency_start_early_phase_delay: 0
-    temporary2_destination_sync: false
-
-  - name: Q8
-    max_plots: 999
-    farmer_public_key:
-    pool_public_key:
-    temporary_directory: /mnt/disk8/tmp
-    temporary2_directory:
-    destination_directory: /mnt/disk8/tmp
-    size: 32
-    bitfield: true
-    threads: 2
-    buckets: 128
-    memory_buffer: 5000
-    max_concurrent: 1
-    max_concurrent_with_start_early: 1
-    stagger_minutes: 70
-    max_for_phase_1: 2
-    concurrency_start_early_phase: 4
-    concurrency_start_early_phase_delay: 0
-    temporary2_destination_sync: false
-
-  - name: Q7
-    max_plots: 999
-    farmer_public_key:
-    pool_public_key:
-    temporary_directory: /mnt/disk7/tmp
-    temporary2_directory:
-    destination_directory: /mnt/disk7/tmp
-    size: 32
-    bitfield: true
-    threads: 2
-    buckets: 128
-    memory_buffer: 5000
-    max_concurrent: 1
-    max_concurrent_with_start_early: 1
-    stagger_minutes: 70
-    max_for_phase_1: 2
-    concurrency_start_early_phase: 4
-    concurrency_start_early_phase_delay: 0
-    temporary2_destination_sync: false
-
-
-  - name: Q6
-    max_plots: 999
-    farmer_public_key:
-    pool_public_key:
-    temporary_directory: /mnt/disk6/tmp
-    temporary2_directory:
-    destination_directory: /mnt/disk6/tmp
-    size: 32
-    bitfield: true
-    threads: 2
-    buckets: 128
-    memory_buffer: 5000
-    max_concurrent: 1
-    max_concurrent_with_start_early: 1
-    stagger_minutes: 70
-    max_for_phase_1: 2
-    concurrency_start_early_phase: 4
-    concurrency_start_early_phase_delay: 0
-    temporary2_destination_sync: false
-
-
-
-  - name: Q5
-    max_plots: 999
-    farmer_public_key:
-    pool_public_key:
-    temporary_directory: /mnt/disk5/tmp
-    temporary2_directory:
-    destination_directory: /mnt/disk5/tmp
-    size: 32
-    bitfield: true
-    threads: 2
-    buckets: 128
-    memory_buffer: 5000
-    max_concurrent: 1
-    max_concurrent_with_start_early: 1
-    stagger_minutes: 70
-    max_for_phase_1: 2
-    concurrency_start_early_phase: 4
-    concurrency_start_early_phase_delay: 0
-    temporary2_destination_sync: false
-
-
-  - name: Q4
-    max_plots: 999
-    farmer_public_key:
-    pool_public_key:
-    temporary_directory: /mnt/disk4/tmp
-    temporary2_directory:
-    destination_directory: /mnt/disk4/tmp
-    size: 32
-    bitfield: true
-    threads: 2
-    buckets: 128
-    memory_buffer: 5000
-    max_concurrent: 1
-    max_concurrent_with_start_early: 1
-    stagger_minutes: 70
-    max_for_phase_1: 2
-    concurrency_start_early_phase: 4
-    concurrency_start_early_phase_delay: 0
-    temporary2_destination_sync: false
-
-
-  - name: Q3
-    max_plots: 999
-    farmer_public_key:
-    pool_public_key:
-    temporary_directory: /mnt/disk3/tmp
-    temporary2_directory:
-    destination_directory: /mnt/disk3/tmp
-    size: 32
-    bitfield: true
-    threads: 2
-    buckets: 128
-    memory_buffer: 5000
-    max_concurrent: 1
-    max_concurrent_with_start_early: 1
-    stagger_minutes: 70
-    max_for_phase_1: 2
-    concurrency_start_early_phase: 4
-    concurrency_start_early_phase_delay: 0
-    temporary2_destination_sync: false
+  # exclude_final_directory: Whether to skip adding `destination_directory` to harvester for farming
+  # skip_full_destinations: When this is enabled it will calculate the sizes of all running plots and the future plot
+  #                         to determine if there is enough space left on the drive to start a job. If there is not,
+  #                         it will skip the destination and move onto the next one. Once all are full, it will
+  #                         disable the job.
+  # unix_process_priority: UNIX Only. This is the priority that plots will be given when they are spawned. UNIX values
+  #                        must be between -20 and 19. The higher the value, the lower the priority of the process.
+  # windows_process_priority: Windows Only. This is the priority that plots will be given when they are spawned.
+  #                           Windows values vary and should be set to one of the following values:
+  #                             - 16384 (BELOW_NORMAL_PRIORITY_CLASS)
+  #                             - 32    (NORMAL_PRIORITY_CLASS)
+  #                             - 32768 (ABOVE_NORMAL_PRIORITY_CLASS)
+  #                             - 128   (HIGH_PRIORITY_CLASS)
+  #                             - 256   (REALTIME_PRIORITY_CLASS)
+  # enable_cpu_affinity: Enable or disable cpu affinity for plot processes. Systems that plot and harvest may see
+  #                      improved harvester or node performance when excluding one or two threads for plotting process.
+  #        cpu_affinity: List of cpu (or threads) to allocate for plot processes. The default example assumes you have
+  #                      a hyper-threaded 4 core CPU (8 logical cores). This config will restrict plot processes to use
+  #                      logical cores 0-5, leaving logical cores 6 and 7 for other processes (6 restricted, 2 free).
 
 
   - name: Q2
     max_plots: 999
     farmer_public_key:
     pool_public_key:
-    temporary_directory: /mnt/disk2/tmp
+    temporary_directory: /mnt/disk2
     temporary2_directory:
-    destination_directory: /mnt/disk2/tmp
+    destination_directory: /mnt/disk2
     size: 32
     bitfield: true
-    threads: 2
+    threads: 8
     buckets: 128
-    memory_buffer: 5000
-    max_concurrent: 1
-    max_concurrent_with_start_early: 1
-    stagger_minutes: 70
+    memory_buffer: 4000
+    max_concurrent: 6
+    max_concurrent_with_start_early: 7
+    initial_delay_minutes: 0
+    stagger_minutes: 60
     max_for_phase_1: 2
     concurrency_start_early_phase: 4
     concurrency_start_early_phase_delay: 0
     temporary2_destination_sync: false
+    exclude_final_directory: false
+    skip_full_destinations: false
+    unix_process_priority: 10
+    windows_process_priority: 32
+    enable_cpu_affinity: false
+    cpu_affinity: [ 0, 1, 2, 3, 4, 5 ]
 
+  - name: Q3
+    max_plots: 999
+    farmer_public_key:
+    pool_public_key:
+    temporary_directory: /mnt/disk3
+    temporary2_directory:
+    destination_directory: /mnt/disk3
+    size: 32
+    bitfield: true
+    threads: 8
+    buckets: 128
+    memory_buffer: 4000
+    max_concurrent: 6
+    max_concurrent_with_start_early: 7
+    initial_delay_minutes: 0
+    stagger_minutes: 60
+    max_for_phase_1: 2
+    concurrency_start_early_phase: 4
+    concurrency_start_early_phase_delay: 0
+    temporary2_destination_sync: false
+    exclude_final_directory: false
+    skip_full_destinations: false
+    unix_process_priority: 10
+    windows_process_priority: 32
+    enable_cpu_affinity: false
+    cpu_affinity: [ 0, 1, 2, 3, 4, 5 ]
+
+  - name: Q4
+    max_plots: 999
+    farmer_public_key:
+    pool_public_key:
+    temporary_directory: /mnt/disk4
+    temporary2_directory:
+    destination_directory: /mnt/disk4
+    size: 32
+    bitfield: true
+    threads: 8
+    buckets: 128
+    memory_buffer: 4000
+    max_concurrent: 6
+    max_concurrent_with_start_early: 7
+    initial_delay_minutes: 0
+    stagger_minutes: 60
+    max_for_phase_1: 2
+    concurrency_start_early_phase: 4
+    concurrency_start_early_phase_delay: 0
+    temporary2_destination_sync: false
+    exclude_final_directory: false
+    skip_full_destinations: false
+    unix_process_priority: 10
+    windows_process_priority: 32
+    enable_cpu_affinity: false
+    cpu_affinity: [ 0, 1, 2, 3, 4, 5 ]
+
+  - name: Q5
+    max_plots: 999
+    farmer_public_key:
+    pool_public_key:
+    temporary_directory: /mnt/disk5
+    temporary2_directory:
+    destination_directory: /mnt/disk5
+    size: 32
+    bitfield: true
+    threads: 8
+    buckets: 128
+    memory_buffer: 4000
+    max_concurrent: 6
+    max_concurrent_with_start_early: 7
+    initial_delay_minutes: 0
+    stagger_minutes: 60
+    max_for_phase_1: 2
+    concurrency_start_early_phase: 4
+    concurrency_start_early_phase_delay: 0
+    temporary2_destination_sync: false
+    exclude_final_directory: false
+    skip_full_destinations: false
+    unix_process_priority: 10
+    windows_process_priority: 32
+    enable_cpu_affinity: false
+    cpu_affinity: [ 0, 1, 2, 3, 4, 5 ]
+
+
+  - name: Q6
+    max_plots: 999
+    farmer_public_key:
+    pool_public_key:
+    temporary_directory: /mnt/disk6
+    temporary2_directory:
+    destination_directory: /mnt/disk6
+    size: 32
+    bitfield: true
+    threads: 8
+    buckets: 128
+    memory_buffer: 4000
+    max_concurrent: 6
+    max_concurrent_with_start_early: 7
+    initial_delay_minutes: 0
+    stagger_minutes: 60
+    max_for_phase_1: 2
+    concurrency_start_early_phase: 4
+    concurrency_start_early_phase_delay: 0
+    temporary2_destination_sync: false
+    exclude_final_directory: false
+    skip_full_destinations: false
+    unix_process_priority: 10
+    windows_process_priority: 32
+    enable_cpu_affinity: false
+    cpu_affinity: [ 0, 1, 2, 3, 4, 5 ]
+
+  - name: Q7
+    max_plots: 999
+    farmer_public_key:
+    pool_public_key:
+    temporary_directory: /mnt/disk7
+    temporary2_directory:
+    destination_directory: /mnt/disk7
+    size: 32
+    bitfield: true
+    threads: 8
+    buckets: 128
+    memory_buffer: 4000
+    max_concurrent: 6
+    max_concurrent_with_start_early: 7
+    initial_delay_minutes: 0
+    stagger_minutes: 60
+    max_for_phase_1: 2
+    concurrency_start_early_phase: 4
+    concurrency_start_early_phase_delay: 0
+    temporary2_destination_sync: false
+    exclude_final_directory: false
+    skip_full_destinations: false
+    unix_process_priority: 10
+    windows_process_priority: 32
+    enable_cpu_affinity: false
+    cpu_affinity: [ 0, 1, 2, 3, 4, 5 ]
+
+  - name: Q8
+    max_plots: 999
+    farmer_public_key:
+    pool_public_key:
+    temporary_directory: /mnt/disk8
+    temporary2_directory:
+    destination_directory: /mnt/disk8
+    size: 32
+    bitfield: true
+    threads: 8
+    buckets: 128
+    memory_buffer: 4000
+    max_concurrent: 6
+    max_concurrent_with_start_early: 7
+    initial_delay_minutes: 0
+    stagger_minutes: 60
+    max_for_phase_1: 2
+    concurrency_start_early_phase: 4
+    concurrency_start_early_phase_delay: 0
+    temporary2_destination_sync: false
+    exclude_final_directory: false
+    skip_full_destinations: false
+    unix_process_priority: 10
+    windows_process_priority: 32
+    enable_cpu_affinity: false
+    cpu_affinity: [ 0, 1, 2, 3, 4, 5 ]
+
+  - name: Q9
+    max_plots: 999
+    farmer_public_key:
+    pool_public_key:
+    temporary_directory: /mnt/disk9
+    temporary2_directory:
+    destination_directory: /mnt/disk9
+    size: 32
+    bitfield: true
+    threads: 8
+    buckets: 128
+    memory_buffer: 4000
+    max_concurrent: 6
+    max_concurrent_with_start_early: 7
+    initial_delay_minutes: 0
+    stagger_minutes: 60
+    max_for_phase_1: 2
+    concurrency_start_early_phase: 4
+    concurrency_start_early_phase_delay: 0
+    temporary2_destination_sync: false
+    exclude_final_directory: false
+    skip_full_destinations: false
+    unix_process_priority: 10
+    windows_process_priority: 32
+    enable_cpu_affinity: false
+    cpu_affinity: [ 0, 1, 2, 3, 4, 5 ]
+
+  - name: Q10
+    max_plots: 999
+    farmer_public_key:
+    pool_public_key:
+    temporary_directory: /mnt/disk10
+    temporary2_directory:
+    destination_directory: /mnt/disk10
+    size: 32
+    bitfield: true
+    threads: 8
+    buckets: 128
+    memory_buffer: 4000
+    max_concurrent: 6
+    max_concurrent_with_start_early: 7
+    initial_delay_minutes: 0
+    stagger_minutes: 60
+    max_for_phase_1: 2
+    concurrency_start_early_phase: 4
+    concurrency_start_early_phase_delay: 0
+    temporary2_destination_sync: false
+    exclude_final_directory: false
+    skip_full_destinations: false
+    unix_process_priority: 10
+    windows_process_priority: 32
+    enable_cpu_affinity: false
+    cpu_affinity: [ 0, 1, 2, 3, 4, 5 ]
+
+  - name: Q11
+    max_plots: 999
+    farmer_public_key:
+    pool_public_key:
+    temporary_directory: /mnt/disk11
+    temporary2_directory:
+    destination_directory: /mnt/disk11
+    size: 32
+    bitfield: true
+    threads: 8
+    buckets: 128
+    memory_buffer: 4000
+    max_concurrent: 6
+    max_concurrent_with_start_early: 7
+    initial_delay_minutes: 0
+    stagger_minutes: 60
+    max_for_phase_1: 2
+    concurrency_start_early_phase: 4
+    concurrency_start_early_phase_delay: 0
+    temporary2_destination_sync: false
+    exclude_final_directory: false
+    skip_full_destinations: false
+    unix_process_priority: 10
+    windows_process_priority: 32
+    enable_cpu_affinity: false
+    cpu_affinity: [ 0, 1, 2, 3, 4, 5 ]
+
+  - name: Q12
+    max_plots: 999
+    farmer_public_key:
+    pool_public_key:
+    temporary_directory: /mnt/disk12
+    temporary2_directory:
+    destination_directory: /mnt/disk12
+    size: 32
+    bitfield: true
+    threads: 8
+    buckets: 128
+    memory_buffer: 4000
+    max_concurrent: 6
+    max_concurrent_with_start_early: 7
+    initial_delay_minutes: 0
+    stagger_minutes: 60
+    max_for_phase_1: 2
+    concurrency_start_early_phase: 4
+    concurrency_start_early_phase_delay: 0
+    temporary2_destination_sync: false
+    exclude_final_directory: false
+    skip_full_destinations: false
+    unix_process_priority: 10
+    windows_process_priority: 32
+    enable_cpu_affinity: false
+    cpu_affinity: [ 0, 1, 2, 3, 4, 5 ]
 
   - name: Q1
     max_plots: 999
     farmer_public_key:
     pool_public_key:
-    temporary_directory: /mnt/disk1/tmp
+    temporary_directory: /mnt/disk1
     temporary2_directory:
-    destination_directory: /mnt/disk1/tmp
+    destination_directory: /mnt/disk1
     size: 32
     bitfield: true
-    threads: 2
+    threads: 8
     buckets: 128
-    memory_buffer: 5000
-    max_concurrent: 1
-    max_concurrent_with_start_early: 1
-    stagger_minutes: 70
+    memory_buffer: 4000
+    max_concurrent: 6
+    max_concurrent_with_start_early: 7
+    initial_delay_minutes: 0
+    stagger_minutes: 60
     max_for_phase_1: 2
     concurrency_start_early_phase: 4
     concurrency_start_early_phase_delay: 0
     temporary2_destination_sync: false
+    exclude_final_directory: false
+    skip_full_destinations: false
+    unix_process_priority: 10
+    windows_process_priority: 32
+    enable_cpu_affinity: false
+    cpu_affinity: [ 0, 1, 2, 3, 4, 5 ]
 
 EOL
 
@@ -639,8 +769,8 @@ do
 
 for i in {2..12}
 do
-  tmp_dir="/mnt/disk\$i/tmp"
-  f_dir="/mnt/\$server/disk\$i/tmp"
+  tmp_dir="/mnt/disk\$i"
+  f_dir="/mnt/\$server/disk\$i"
 #  echo -e "\$f_dir"
   for file in "\$tmp_dir"/*.plot; do
     filename=\$(basename -- "\$file")
