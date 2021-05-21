@@ -758,11 +758,11 @@ chmod a+x ~/sched-setup.sh
 cat > ~/copy-plots.sh<<EOL
 #!/bin/bash
 
-\$IP=68
-\$server=s\$IP-12x12
+IP=68
+server=s1-12x12
 
 mkdir /mnt/\$server
-sudo mount 10.32.51.1\$IP:/mnt -t nfs /mnt/\$server
+sudo mount 10.32.51.\$IP:/mnt -t nfs /mnt/\$server
 
 while :
 do
