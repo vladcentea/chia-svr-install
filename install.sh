@@ -432,7 +432,7 @@ jobs:
     threads: 8
     buckets: 128
     memory_buffer: 4000
-    max_concurrent: 6
+    max_concurrent: 1
     max_concurrent_with_start_early: 7
     initial_delay_minutes: 0
     stagger_minutes: 60
@@ -459,7 +459,7 @@ jobs:
     threads: 8
     buckets: 128
     memory_buffer: 4000
-    max_concurrent: 6
+    max_concurrent: 1
     max_concurrent_with_start_early: 7
     initial_delay_minutes: 0
     stagger_minutes: 60
@@ -486,7 +486,7 @@ jobs:
     threads: 8
     buckets: 128
     memory_buffer: 4000
-    max_concurrent: 6
+    max_concurrent: 1
     max_concurrent_with_start_early: 7
     initial_delay_minutes: 0
     stagger_minutes: 60
@@ -513,7 +513,7 @@ jobs:
     threads: 8
     buckets: 128
     memory_buffer: 4000
-    max_concurrent: 6
+    max_concurrent: 1
     max_concurrent_with_start_early: 7
     initial_delay_minutes: 0
     stagger_minutes: 60
@@ -541,7 +541,7 @@ jobs:
     threads: 8
     buckets: 128
     memory_buffer: 4000
-    max_concurrent: 6
+    max_concurrent: 1
     max_concurrent_with_start_early: 7
     initial_delay_minutes: 0
     stagger_minutes: 60
@@ -568,7 +568,7 @@ jobs:
     threads: 8
     buckets: 128
     memory_buffer: 4000
-    max_concurrent: 6
+    max_concurrent: 1
     max_concurrent_with_start_early: 7
     initial_delay_minutes: 0
     stagger_minutes: 60
@@ -595,7 +595,7 @@ jobs:
     threads: 8
     buckets: 128
     memory_buffer: 4000
-    max_concurrent: 6
+    max_concurrent: 1
     max_concurrent_with_start_early: 7
     initial_delay_minutes: 0
     stagger_minutes: 60
@@ -622,7 +622,7 @@ jobs:
     threads: 8
     buckets: 128
     memory_buffer: 4000
-    max_concurrent: 6
+    max_concurrent: 1
     max_concurrent_with_start_early: 7
     initial_delay_minutes: 0
     stagger_minutes: 60
@@ -649,7 +649,7 @@ jobs:
     threads: 8
     buckets: 128
     memory_buffer: 4000
-    max_concurrent: 6
+    max_concurrent: 1
     max_concurrent_with_start_early: 7
     initial_delay_minutes: 0
     stagger_minutes: 60
@@ -676,7 +676,7 @@ jobs:
     threads: 8
     buckets: 128
     memory_buffer: 4000
-    max_concurrent: 6
+    max_concurrent: 1
     max_concurrent_with_start_early: 7
     initial_delay_minutes: 0
     stagger_minutes: 60
@@ -703,7 +703,7 @@ jobs:
     threads: 8
     buckets: 128
     memory_buffer: 4000
-    max_concurrent: 6
+    max_concurrent: 1
     max_concurrent_with_start_early: 7
     initial_delay_minutes: 0
     stagger_minutes: 60
@@ -730,7 +730,7 @@ jobs:
     threads: 8
     buckets: 128
     memory_buffer: 4000
-    max_concurrent: 6
+    max_concurrent: 1
     max_concurrent_with_start_early: 7
     initial_delay_minutes: 0
     stagger_minutes: 60
