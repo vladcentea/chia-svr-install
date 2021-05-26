@@ -156,8 +156,8 @@ cat > ~/hp-setup.sh <<EOL2
 #!/bin/bash
 
 cd ~
-wget https://github.com/hpool-dev/chia-miner/releases/download/v1.2.0-5/HPool-Miner-chia-v1.2.0-5-linux.zip
-unzip HPool-Miner-chia-v1.2.0-5-linux.zip
+wget https://github.com/hpool-dev/chia-miner/releases/download/v1.4.0-2/HPool-Miner-chia-v1.4.0-2-linux.zip
+unzip HPool-Miner-chia-v1.4.0-2-linux.zip
 mv linux hpool-farmer
 
 ### deploy HPool CONFIG
