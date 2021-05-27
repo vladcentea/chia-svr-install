@@ -71,7 +71,7 @@ chmod a+x ~/disk-setup.sh
 cat > ~/pn-setup.sh<<EOL
 
 #!/bin/bash
-vncserver
+
 
 sudo echo -e "  ethernets:" >> /etc/netplan/01-netcfg.yaml
 sudo echo -e "    enp2s0f1:" >> /etc/netplan/01-netcfg.yaml
@@ -836,6 +836,7 @@ sudo ~/fw-setup.sh
 ~/chia-setup.sh 
 ~/hp-setup.sh 
 ~/sched-setup.sh
+vncserver
 
 EOL
 chmod a+x ~/all_install.sh
