@@ -767,7 +767,7 @@ sudo mount 10.32.51.\$IP:/mnt -t nfs /mnt/\$server
 while :
 do
 
-for i in {2..12}
+for i in {1..12}
 do
   tmp_dir="/mnt/disk\$i"
   f_dir="/mnt/\$server/disk\$i"
