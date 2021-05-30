@@ -429,7 +429,7 @@ jobs:
     destination_directory: /mnt/disk2
     size: 32
     bitfield: true
-    threads: 8
+    threads: 2
     buckets: 128
     memory_buffer: 4000
     max_concurrent: 1
@@ -442,7 +442,7 @@ jobs:
     temporary2_destination_sync: false
     exclude_final_directory: false
     skip_full_destinations: false
-    unix_process_priority: 10
+    unix_process_priority: 0
     windows_process_priority: 32
     enable_cpu_affinity: false
     cpu_affinity: [ 0, 1, 2, 3, 4, 5 ]
@@ -456,7 +456,7 @@ jobs:
     destination_directory: /mnt/disk3
     size: 32
     bitfield: true
-    threads: 8
+    threads: 2
     buckets: 128
     memory_buffer: 4000
     max_concurrent: 1
@@ -469,7 +469,7 @@ jobs:
     temporary2_destination_sync: false
     exclude_final_directory: false
     skip_full_destinations: false
-    unix_process_priority: 10
+    unix_process_priority: 0
     windows_process_priority: 32
     enable_cpu_affinity: false
     cpu_affinity: [ 0, 1, 2, 3, 4, 5 ]
@@ -483,7 +483,7 @@ jobs:
     destination_directory: /mnt/disk4
     size: 32
     bitfield: true
-    threads: 8
+    threads: 2
     buckets: 128
     memory_buffer: 4000
     max_concurrent: 1
@@ -496,7 +496,7 @@ jobs:
     temporary2_destination_sync: false
     exclude_final_directory: false
     skip_full_destinations: false
-    unix_process_priority: 10
+    unix_process_priority: 0
     windows_process_priority: 32
     enable_cpu_affinity: false
     cpu_affinity: [ 0, 1, 2, 3, 4, 5 ]
@@ -510,7 +510,7 @@ jobs:
     destination_directory: /mnt/disk5
     size: 32
     bitfield: true
-    threads: 8
+    threads: 2
     buckets: 128
     memory_buffer: 4000
     max_concurrent: 1
@@ -538,7 +538,7 @@ jobs:
     destination_directory: /mnt/disk6
     size: 32
     bitfield: true
-    threads: 8
+    threads: 2
     buckets: 128
     memory_buffer: 4000
     max_concurrent: 1
@@ -551,7 +551,7 @@ jobs:
     temporary2_destination_sync: false
     exclude_final_directory: false
     skip_full_destinations: false
-    unix_process_priority: 10
+    unix_process_priority: 0
     windows_process_priority: 32
     enable_cpu_affinity: false
     cpu_affinity: [ 0, 1, 2, 3, 4, 5 ]
@@ -565,7 +565,7 @@ jobs:
     destination_directory: /mnt/disk7
     size: 32
     bitfield: true
-    threads: 8
+    threads: 2
     buckets: 128
     memory_buffer: 4000
     max_concurrent: 1
@@ -578,7 +578,7 @@ jobs:
     temporary2_destination_sync: false
     exclude_final_directory: false
     skip_full_destinations: false
-    unix_process_priority: 10
+    unix_process_priority: 0
     windows_process_priority: 32
     enable_cpu_affinity: false
     cpu_affinity: [ 0, 1, 2, 3, 4, 5 ]
@@ -592,7 +592,7 @@ jobs:
     destination_directory: /mnt/disk8
     size: 32
     bitfield: true
-    threads: 8
+    threads: 2
     buckets: 128
     memory_buffer: 4000
     max_concurrent: 1
@@ -605,7 +605,7 @@ jobs:
     temporary2_destination_sync: false
     exclude_final_directory: false
     skip_full_destinations: false
-    unix_process_priority: 10
+    unix_process_priority: 0
     windows_process_priority: 32
     enable_cpu_affinity: false
     cpu_affinity: [ 0, 1, 2, 3, 4, 5 ]
@@ -619,7 +619,7 @@ jobs:
     destination_directory: /mnt/disk9
     size: 32
     bitfield: true
-    threads: 8
+    threads: 2
     buckets: 128
     memory_buffer: 4000
     max_concurrent: 1
@@ -632,7 +632,7 @@ jobs:
     temporary2_destination_sync: false
     exclude_final_directory: false
     skip_full_destinations: false
-    unix_process_priority: 10
+    unix_process_priority: 0
     windows_process_priority: 32
     enable_cpu_affinity: false
     cpu_affinity: [ 0, 1, 2, 3, 4, 5 ]
@@ -646,7 +646,7 @@ jobs:
     destination_directory: /mnt/disk10
     size: 32
     bitfield: true
-    threads: 8
+    threads: 2
     buckets: 128
     memory_buffer: 4000
     max_concurrent: 1
@@ -659,7 +659,7 @@ jobs:
     temporary2_destination_sync: false
     exclude_final_directory: false
     skip_full_destinations: false
-    unix_process_priority: 10
+    unix_process_priority: 0
     windows_process_priority: 32
     enable_cpu_affinity: false
     cpu_affinity: [ 0, 1, 2, 3, 4, 5 ]
@@ -673,7 +673,7 @@ jobs:
     destination_directory: /mnt/disk11
     size: 32
     bitfield: true
-    threads: 8
+    threads: 2
     buckets: 128
     memory_buffer: 4000
     max_concurrent: 1
@@ -686,7 +686,7 @@ jobs:
     temporary2_destination_sync: false
     exclude_final_directory: false
     skip_full_destinations: false
-    unix_process_priority: 10
+    unix_process_priority: 0
     windows_process_priority: 32
     enable_cpu_affinity: false
     cpu_affinity: [ 0, 1, 2, 3, 4, 5 ]
@@ -700,7 +700,7 @@ jobs:
     destination_directory: /mnt/disk12
     size: 32
     bitfield: true
-    threads: 8
+    threads: 2
     buckets: 128
     memory_buffer: 4000
     max_concurrent: 1
@@ -713,7 +713,7 @@ jobs:
     temporary2_destination_sync: false
     exclude_final_directory: false
     skip_full_destinations: false
-    unix_process_priority: 10
+    unix_process_priority: 0
     windows_process_priority: 32
     enable_cpu_affinity: false
     cpu_affinity: [ 0, 1, 2, 3, 4, 5 ]
@@ -727,7 +727,7 @@ jobs:
     destination_directory: /mnt/disk1
     size: 32
     bitfield: true
-    threads: 8
+    threads: 2
     buckets: 128
     memory_buffer: 4000
     max_concurrent: 1
@@ -740,7 +740,7 @@ jobs:
     temporary2_destination_sync: false
     exclude_final_directory: false
     skip_full_destinations: false
-    unix_process_priority: 10
+    unix_process_priority: 0
     windows_process_priority: 32
     enable_cpu_affinity: false
     cpu_affinity: [ 0, 1, 2, 3, 4, 5 ]
