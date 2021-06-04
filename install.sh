@@ -111,15 +111,12 @@ cat > ~/fw-setup.sh <<EOL
 #!/bin/bash
 
 sudo ufw allow from any to any port 22
-sudo ufw allow from any to any port 5901
-sudo ufw allow from any to any port 5902
-sudo ufw allow from any to any port 8444
-sudo ufw allow from any to any port 5903
-sudo ufw allow from any to any port 5904
 sudo ufw allow from 10.32.51.160/27 to 10.32.51.160/27  port nfs
-sudo ufw enable
+yes y | sudo ufw enable
 sudo ufw status
 
+chmod a+x ~/chia-svr-install/dyn-fw.sh
+sudo ~/chia-svr-install/dyn-fw.sh
 
 EOL
 
