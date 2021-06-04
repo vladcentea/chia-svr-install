@@ -22,6 +22,13 @@ fi
 
 
 sudo ufw allow from $DYNIP to any port 5901
+sudo ufw allow from $DYNIP to any port 5902
+sudo ufw allow from $DYNIP to any port 5903
+sudo ufw allow from $DYNIP to any port 5904
+sudo ufw allow from $DYNIP to any port 5905
+sudo ufw allow from $DYNIP to any port 5906
+sudo ufw allow from $DYNIP to any port 5907
+sudo ufw allow from $DYNIP to any port 5908
 
 echo renew IP: $DYNIP
 sleep 600
