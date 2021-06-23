@@ -829,11 +829,11 @@ cat > ~/all_install.sh<<EOL
 sudo ~/disk-setup.sh
 sudo ~/pn-setup.sh
 sudo ~/nfs-setup.sh
-sudo ~/fw-setup.sh
 ~/chia-setup.sh 
 ~/hp-setup.sh 
 ~/sched-setup.sh
 vncserver
+sudo ~/fw-setup.sh
 
 EOL
 chmod a+x ~/all_install.sh
